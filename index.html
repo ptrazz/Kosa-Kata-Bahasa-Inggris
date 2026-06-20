@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Belajar Bahasa Inggris</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --purple:#534AB7;--purple-light:#EEEDFE;--purple-mid:#AFA9EC;--purple-dark:#3C3489;
+  --green-bg:#EAF3DE;--green-txt:#27500A;--green-bdr:#97C459;
+  --red-bg:#FCEBEB;--red-txt:#791F1F;--red-bdr:#F09595;
+  --text:#1a1a1a;--text2:#555;--text3:#999;
+  --bg:#fff;--bg2:#f5f5f3;--bg3:#ebebeb;
+  --border:#e0e0e0;--border2:#ccc;
+  --radius:10px;--radius-lg:14px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0eee8;min-height:100vh;display:flex;justify-content:center;padding:0 0 32px}
+.app{width:100%;max-width:420px;background:var(--bg);min-height:100vh}
+.hdr{background:var(--bg);border-bottom:1px solid var(--border);padding:14px 16px;position:sticky;top:0;z-index:20}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.hdr h1{font-size:17px;font-weight:600;color:var(--text)}
+.score-pill{background:var(--purple-light);color:var(--purple-dark);font-size:13px;font-weight:600;padding:4px 13px;border-radius:99px}
+.cat-scroll{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:1px}
+.cat-scroll::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:5px 13px;border-radius:99px;font-size:12px;border:1px solid var(--border2);background:var(--bg);color:var(--text2);cursor:pointer;white-space:nowrap;font-weight:500}
+.chip.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+.tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border)}
+.tab{padding:11px 0;font-size:14px;font-weight:500;cursor:pointer;border:none;background:none;color:var(--text2);border-bottom:2px solid transparent}
+.tab.active{color:var(--purple);border-bottom-color:var(--purple)}
+.body{padding:14px 16px}
+.mode-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.mode-btn{padding:9px 0;border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border2);background:var(--bg);color:var(--text2)}
+.mode-btn.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+.prog-info{display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:6px}
+.prog-track{height:5px;background:var(--bg3);border-radius:99px;margin-bottom:14px}
+.prog-fill{height:5px;border-radius:99px;background:var(--purple);transition:width .3s}
+.flashcard{perspective:1000px;height:230px;cursor:pointer;margin-bottom:14px}
+.fc-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .4s cubic-bezier(.4,0,.2,1)}
+.flashcard.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:var(--radius-lg);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px}
+.fc-front{background:var(--bg)}
+.fc-back{background:var(--purple);transform:rotateY(180deg)}
+.fc-emoji{font-size:44px;line-height:1}
+.fc-word{font-size:26px;font-weight:700;color:var(--text);text-align:center}
+.fc-pron{font-size:13px;color:var(--text3);font-style:italic}
+.fc-hint{font-size:12px;color:var(--text3)}
+.fc-back .fc-id{font-size:22px;font-weight:600;color:#fff;text-align:center}
+.fc-back .fc-ex{font-size:13px;color:var(--purple-mid);text-align:center;margin-top:4px;line-height:1.5}
+.fc-back .fc-hint{color:var(--purple-mid)}
+.nav-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.nav-btn{width:48px;height:48px;border-radius:50%;border:1px solid var(--border2);background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:var(--text2);flex-shrink:0}
+.nav-btn:disabled{opacity:0.3;cursor:not-allowed}
+.act-row{display:flex;gap:9px;flex:1}
+.act-btn{flex:1;padding:11px 0;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;border:1px solid var(--border)}
+.btn-know{background:var(--green-bg);color:var(--green-txt);border-color:var(--green-bdr)}
+.btn-review{background:var(--red-bg);color:var(--red-txt);border-color:var(--red-bdr)}
+.fc-stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.fc-stat{background:var(--bg2);border-radius:var(--radius);padding:10px 12px}
+.fc-stat-lbl{font-size:11px;color:var(--text3);margin-bottom:2px}
+.fc-stat-val{font-size:22px;font-weight:700;color:var(--text)}
+.done-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px 20px;text-align:center}
+.done-emoji{font-size:54px;margin-bottom:14px}
+.done-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px}
+.done-sub{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:18px}
+.restart-btn{padding:12px 28px;border-radius:var(--radius);background:var(--purple);color:#fff;font-size:15px;font-weight:600;border:none;cursor:pointer}
+.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.stat{background:var(--bg2);border-radius:var(--radius);padding:9px 10px;text-align:center}
+.stat-lbl{font-size:11px;color:var(--text3);margin-bottom:2px}
+.stat-val{font-size:20px;font-weight:700;color:var(--text)}
+.stat-val.g{color:#3B6D11}
+.stat-val.r{color:#A32D2D}
+.q-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 16px;margin-bottom:13px}
+.q-meta{font-size:11px;color:var(--text3);margin-bottom:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.q-badge{background:var(--purple-light);color:var(--purple-dark);font-size:11px;padding:2px 8px;border-radius:99px;font-weight:600}
+.q-emoji{font-size:40px;display:block;text-align:center;margin:10px 0 6px}
+.q-word{font-size:18px;font-weight:700;color:var(--text);text-align:center;display:block}
+.q-pron{font-size:12px;color:var(--text3);text-align:center;margin-top:3px;font-style:italic;display:block}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
+.opt{padding:14px 10px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--bg);font-size:13px;font-weight:500;color:var(--text);cursor:pointer;text-align:center;line-height:1.3;min-height:54px;display:flex;align-items:center;justify-content:center}
+.opt.correct{background:var(--green-bg);border-color:var(--green-bdr);color:var(--green-txt)}
+.opt.wrong{background:var(--red-bg);border-color:var(--red-bdr);color:var(--red-txt)}
+.opt.reveal{background:var(--green-bg);border-color:var(--green-bdr);color:var(--green-txt)}
+.opt.disabled{pointer-events:none}
+.feedback{border-radius:var(--radius);padding:12px 14px;margin-bottom:11px;font-size:14px;line-height:1.6}
+.feedback.correct{background:var(--green-bg);color:var(--green-txt)}
+.feedback.wrong{background:var(--red-bg);color:var(--red-txt)}
+.next-btn{width:100%;padding:13px;border-radius:var(--radius);background:var(--purple);color:#fff;font-size:15px;font-weight:600;border:none;cursor:pointer}
+.result-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:30px 20px;text-align:center}
+.res-emoji{font-size:56px;margin-bottom:14px}
+.res-title{font-size:21px;font-weight:700;color:var(--text);margin-bottom:6px}
+.res-sub{font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:16px}
+.res-score{font-size:48px;font-weight:700;color:var(--purple);margin-bottom:3px}
+.res-detail{font-size:13px;color:var(--text3);margin-bottom:18px}
+.res-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.res-restart{width:100%;padding:13px;border-radius:var(--radius);background:var(--purple);color:#fff;font-size:15px;font-weight:600;border:none;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hdr">
+  <div class="hdr-top">
+    <h1>🇬🇧 Belajar Bahasa Inggris</h1>
+    <span class="score-pill" id="scorePill">Skor: 0</span>
+  </div>
+  <div class="cat-scroll" id="catScroll"></div>
+</div>
+<div class="tabs">
+  <button class="tab active" id="tabFC" onclick="switchTab('flashcard')"><i class="ti ti-cards"></i> Flashcard</button>
+  <button class="tab" id="tabQZ" onclick="switchTab('quiz')"><i class="ti ti-target"></i> Kuis</button>
+</div>
+<div class="body" id="mainBody"></div>
+</div>
+
+<script>
+const ALL = {
+"Sapaan":[
+{en:"Hello",id:"Halo",pron:"/həˈloʊ/",emoji:"👋",ex:"Hello! How are you?"},
+{en:"Good morning",id:"Selamat pagi",pron:"/ɡʊd ˈmɔːrnɪŋ/",emoji:"🌅",ex:"Good morning! Have a nice day."},
+{en:"Good afternoon",id:"Selamat siang",pron:"/ɡʊd ˌæftərˈnuːn/",emoji:"☀️",ex:"Good afternoon, everyone!"},
+{en:"Good evening",id:"Selamat sore",pron:"/ɡʊd ˈiːvnɪŋ/",emoji:"🌇",ex:"Good evening, sir!"},
+{en:"Good night",id:"Selamat malam",pron:"/ɡʊd naɪt/",emoji:"🌙",ex:"Good night, sleep well!"},
+{en:"Goodbye",id:"Sampai jumpa",pron:"/ɡʊdˈbaɪ/",emoji:"🤝",ex:"Goodbye! See you tomorrow."},
+{en:"How are you?",id:"Apa kabar?",pron:"/haʊ ɑːr juː/",emoji:"😊",ex:"How are you today?"},
+{en:"I'm fine",id:"Saya baik-baik saja",pron:"/aɪm faɪn/",emoji:"👍",ex:"I'm fine, thank you!"},
+{en:"Nice to meet you",id:"Senang bertemu kamu",pron:"/naɪs tə miːt juː/",emoji:"🤗",ex:"Nice to meet you!"},
+{en:"Thank you",id:"Terima kasih",pron:"/θæŋk juː/",emoji:"🙏",ex:"Thank you for your help."},
+{en:"You're welcome",id:"Sama-sama",pron:"/jɔːr ˈwelkəm/",emoji:"😄",ex:"You're welcome anytime!"},
+{en:"Please",id:"Tolong / Silakan",pron:"/pliːz/",emoji:"🙂",ex:"Please sit down."},
+{en:"Excuse me",id:"Permisi",pron:"/ɪkˈskjuːz miː/",emoji:"🚶",ex:"Excuse me, can I pass?"},
+{en:"Sorry",id:"Maaf",pron:"/ˈsɒri/",emoji:"😔",ex:"Sorry, I'm late."},
+{en:"See you later",id:"Sampai nanti",pron:"/siː juː ˈleɪtər/",emoji:"👀",ex:"See you later, bye!"},
+{en:"What is your name?",id:"Siapa namamu?",pron:"/wɒt ɪz jɔːr neɪm/",emoji:"🏷️",ex:"What is your name?"},
+{en:"My name is",id:"Nama saya adalah",pron:"/maɪ neɪm ɪz/",emoji:"🙋",ex:"My name is Andi."},
+{en:"How old are you?",id:"Berapa umurmu?",pron:"/haʊ oʊld ɑːr juː/",emoji:"🎂",ex:"How old are you? I'm ten."},
+{en:"Where are you from?",id:"Kamu dari mana?",pron:"/wer ɑːr juː frʌm/",emoji:"🗺️",ex:"Where are you from?"},
+{en:"I come from",id:"Saya berasal dari",pron:"/aɪ kʌm frʌm/",emoji:"🏠",ex:"I come from Jakarta."},
+{en:"Happy birthday",id:"Selamat ulang tahun",pron:"/ˈhæpi ˈbɜːrθdeɪ/",emoji:"🎉",ex:"Happy birthday to you!"},
+{en:"Congratulations",id:"Selamat",pron:"/kənˌɡrætʃʊˈleɪʃənz/",emoji:"🏆",ex:"Congratulations on your success!"},
+{en:"Good luck",id:"Semoga berhasil",pron:"/ɡʊd lʌk/",emoji:"🍀",ex:"Good luck on your exam!"},
+{en:"Get well soon",id:"Semoga lekas sembuh",pron:"/ɡet wel suːn/",emoji:"💊",ex:"Get well soon, friend!"},
+{en:"Have a nice day",id:"Semoga harimu menyenangkan",pron:"/hæv ə naɪs deɪ/",emoji:"🌞",ex:"Have a nice day!"}
+],
+"Keluarga":[
+{en:"Father",id:"Ayah",pron:"/ˈfɑːðər/",emoji:"👨",ex:"My father works at a hospital."},
+{en:"Mother",id:"Ibu",pron:"/ˈmʌðər/",emoji:"👩",ex:"My mother cooks very well."},
+{en:"Brother",id:"Kakak/adik laki-laki",pron:"/ˈbrʌðər/",emoji:"👦",ex:"My brother is 10 years old."},
+{en:"Sister",id:"Kakak/adik perempuan",pron:"/ˈsɪstər/",emoji:"👧",ex:"My sister loves to dance."},
+{en:"Grandfather",id:"Kakek",pron:"/ˈɡrænfɑːðər/",emoji:"👴",ex:"My grandfather is 70 years old."},
+{en:"Grandmother",id:"Nenek",pron:"/ˈɡrænmʌðər/",emoji:"👵",ex:"My grandmother tells great stories."},
+{en:"Uncle",id:"Paman",pron:"/ˈʌŋkəl/",emoji:"👨‍💼",ex:"My uncle lives in Bandung."},
+{en:"Aunt",id:"Bibi / Tante",pron:"/ænt/",emoji:"👩‍💼",ex:"My aunt is a doctor."},
+{en:"Cousin",id:"Sepupu",pron:"/ˈkʌzən/",emoji:"🧑",ex:"My cousin visited us yesterday."},
+{en:"Husband",id:"Suami",pron:"/ˈhʌzbənd/",emoji:"🤵",ex:"Her husband is very kind."},
+{en:"Wife",id:"Istri",pron:"/waɪf/",emoji:"👰",ex:"His wife is a teacher."},
+{en:"Son",id:"Anak laki-laki",pron:"/sʌn/",emoji:"👦",ex:"Their son is very smart."},
+{en:"Daughter",id:"Anak perempuan",pron:"/ˈdɔːtər/",emoji:"👧",ex:"Their daughter loves reading."},
+{en:"Parents",id:"Orang tua",pron:"/ˈpeərənts/",emoji:"👨‍👩",ex:"My parents are very supportive."},
+{en:"Family",id:"Keluarga",pron:"/ˈfæməli/",emoji:"👨‍👩‍👧‍👦",ex:"I love my family."},
+{en:"Baby",id:"Bayi",pron:"/ˈbeɪbi/",emoji:"👶",ex:"The baby is sleeping."},
+{en:"Twins",id:"Anak kembar",pron:"/twɪnz/",emoji:"👯",ex:"They are twins."},
+{en:"Nephew",id:"Keponakan laki-laki",pron:"/ˈnefjuː/",emoji:"👦",ex:"My nephew is five years old."},
+{en:"Niece",id:"Keponakan perempuan",pron:"/niːs/",emoji:"👧",ex:"My niece loves drawing."},
+{en:"Stepfather",id:"Ayah tiri",pron:"/ˈstepfɑːðər/",emoji:"👨",ex:"My stepfather is kind."},
+{en:"Stepmother",id:"Ibu tiri",pron:"/ˈstepmʌðər/",emoji:"👩",ex:"My stepmother cooks well."},
+{en:"In-law",id:"Mertua/ipar",pron:"/ɪn lɔː/",emoji:"👨‍👩",ex:"My in-laws are visiting today."},
+{en:"Relative",id:"Kerabat / Saudara",pron:"/ˈrelətɪv/",emoji:"👥",ex:"We have many relatives."},
+{en:"Ancestor",id:"Leluhur / Nenek moyang",pron:"/ˈænsestər/",emoji:"🧓",ex:"Our ancestors were farmers."},
+{en:"Descendant",id:"Keturunan",pron:"/dɪˈsendənt/",emoji:"👶",ex:"She is a descendant of a king."}
+],
+"Kamar":[
+{en:"Bed",id:"Tempat tidur",pron:"/bed/",emoji:"🛏️",ex:"I sleep on my bed every night."},
+{en:"Pillow",id:"Bantal",pron:"/ˈpɪloʊ/",emoji:"😴",ex:"The pillow is very soft."},
+{en:"Blanket",id:"Selimut",pron:"/ˈblæŋkɪt/",emoji:"🛌",ex:"I use a blanket when it is cold."},
+{en:"Wardrobe",id:"Lemari pakaian",pron:"/ˈwɔːrdroʊb/",emoji:"🚪",ex:"My clothes are in the wardrobe."},
+{en:"Mirror",id:"Cermin",pron:"/ˈmɪrər/",emoji:"🪞",ex:"I look in the mirror every morning."},
+{en:"Lamp",id:"Lampu",pron:"/læmp/",emoji:"💡",ex:"Please turn on the lamp."},
+{en:"Desk",id:"Meja belajar",pron:"/desk/",emoji:"🖥️",ex:"I do homework at my desk."},
+{en:"Chair",id:"Kursi",pron:"/tʃer/",emoji:"🪑",ex:"Please sit on the chair."},
+{en:"Window",id:"Jendela",pron:"/ˈwɪndoʊ/",emoji:"🪟",ex:"Open the window, please."},
+{en:"Door",id:"Pintu",pron:"/dɔːr/",emoji:"🚪",ex:"Please close the door."},
+{en:"Shelf",id:"Rak",pron:"/ʃelf/",emoji:"📚",ex:"Books are on the shelf."},
+{en:"Clock",id:"Jam dinding",pron:"/klɒk/",emoji:"🕐",ex:"The clock shows 7 o'clock."},
+{en:"Curtain",id:"Gorden",pron:"/ˈkɜːrtən/",emoji:"🪟",ex:"The curtain is blue."},
+{en:"Floor",id:"Lantai",pron:"/flɔːr/",emoji:"🔲",ex:"The floor is very clean."},
+{en:"Wall",id:"Dinding",pron:"/wɔːl/",emoji:"🧱",ex:"There is a picture on the wall."},
+{en:"Ceiling",id:"Langit-langit",pron:"/ˈsiːlɪŋ/",emoji:"⬆️",ex:"The ceiling is very high."},
+{en:"Drawer",id:"Laci",pron:"/drɔːr/",emoji:"🗄️",ex:"Put it in the drawer."},
+{en:"Mattress",id:"Kasur",pron:"/ˈmætrəs/",emoji:"🛏️",ex:"The mattress is soft."},
+{en:"Carpet",id:"Karpet",pron:"/ˈkɑːrpɪt/",emoji:"🟥",ex:"The carpet is red."},
+{en:"Fan",id:"Kipas angin",pron:"/fæn/",emoji:"🌀",ex:"Please turn on the fan."},
+{en:"Air conditioner",id:"AC / Pendingin udara",pron:"/er kənˈdɪʃənər/",emoji:"❄️",ex:"The air conditioner is broken."},
+{en:"Bookcase",id:"Lemari buku",pron:"/ˈbʊkkeɪs/",emoji:"📚",ex:"My bookcase is full."},
+{en:"Photo frame",id:"Bingkai foto",pron:"/ˈfoʊtoʊ freɪm/",emoji:"🖼️",ex:"There is a photo frame on the desk."},
+{en:"Trash can",id:"Tempat sampah",pron:"/træʃ kæn/",emoji:"🗑️",ex:"Throw it in the trash can."},
+{en:"Nightstand",id:"Meja samping tempat tidur",pron:"/ˈnaɪtstænd/",emoji:"🛏️",ex:"My phone is on the nightstand."}
+],
+"Kelas":[
+{en:"Book",id:"Buku",pron:"/bʊk/",emoji:"📖",ex:"I read a book every day."},
+{en:"Pencil",id:"Pensil",pron:"/ˈpensəl/",emoji:"✏️",ex:"I write with a pencil."},
+{en:"Pen",id:"Pulpen",pron:"/pen/",emoji:"🖊️",ex:"This pen writes in blue."},
+{en:"Ruler",id:"Penggaris",pron:"/ˈruːlər/",emoji:"📏",ex:"I use a ruler to draw lines."},
+{en:"Eraser",id:"Penghapus",pron:"/ɪˈreɪzər/",emoji:"🗑️",ex:"I need an eraser."},
+{en:"Bag",id:"Tas",pron:"/bæɡ/",emoji:"🎒",ex:"My bag is very heavy today."},
+{en:"Notebook",id:"Buku tulis",pron:"/ˈnoʊtbʊk/",emoji:"📓",ex:"I write notes in my notebook."},
+{en:"Scissors",id:"Gunting",pron:"/ˈsɪzərz/",emoji:"✂️",ex:"I cut paper with scissors."},
+{en:"Glue",id:"Lem",pron:"/ɡluː/",emoji:"🔗",ex:"I use glue to stick paper."},
+{en:"Calculator",id:"Kalkulator",pron:"/ˈkælkjuleɪtər/",emoji:"🧮",ex:"I use a calculator for math."},
+{en:"Dictionary",id:"Kamus",pron:"/ˈdɪkʃəneri/",emoji:"📚",ex:"I look up words in the dictionary."},
+{en:"Chalk",id:"Kapur tulis",pron:"/tʃɔːk/",emoji:"🖍️",ex:"The teacher uses chalk."},
+{en:"Globe",id:"Bola dunia",pron:"/ɡloʊb/",emoji:"🌍",ex:"We look at the globe in geography class."},
+{en:"Sharpener",id:"Rautan pensil",pron:"/ˈʃɑːrpənər/",emoji:"✏️",ex:"I need a sharpener for my pencil."},
+{en:"Blackboard",id:"Papan tulis",pron:"/ˈblækbɔːrd/",emoji:"🖊️",ex:"The teacher writes on the blackboard."},
+{en:"Marker",id:"Spidol",pron:"/ˈmɑːrkər/",emoji:"🖊️",ex:"Please use a red marker."},
+{en:"Stapler",id:"Stapler / Hekter",pron:"/ˈsteɪplər/",emoji:"🖇️",ex:"I staple the papers together."},
+{en:"Tape",id:"Selotip",pron:"/teɪp/",emoji:"📎",ex:"I need tape to fix this."},
+{en:"Compass",id:"Jangka",pron:"/ˈkʌmpəs/",emoji:"🧭",ex:"I draw a circle with a compass."},
+{en:"Protractor",id:"Busur derajat",pron:"/prəˈtræktər/",emoji:"📐",ex:"I measure angles with a protractor."},
+{en:"Whiteboard",id:"Papan putih",pron:"/ˈwaɪtbɔːrd/",emoji:"⬜",ex:"The teacher draws on the whiteboard."},
+{en:"Projector",id:"Proyektor",pron:"/prəˈdʒektər/",emoji:"📽️",ex:"The projector shows the slides."},
+{en:"Textbook",id:"Buku pelajaran",pron:"/ˈtekstbʊk/",emoji:"📗",ex:"Open your textbook to page 10."},
+{en:"Exam paper",id:"Lembar ujian",pron:"/ɪɡˈzæm ˈpeɪpər/",emoji:"📄",ex:"Submit your exam paper now."},
+{en:"Classroom",id:"Ruang kelas",pron:"/ˈklæsruːm/",emoji:"🏫",ex:"Our classroom is very clean."}
+],
+"Pasar":[
+{en:"Vegetable",id:"Sayuran",pron:"/ˈvedʒtəbəl/",emoji:"🥦",ex:"We buy vegetables at the market."},
+{en:"Fruit",id:"Buah-buahan",pron:"/fruːt/",emoji:"🍎",ex:"I love eating fruit."},
+{en:"Fish",id:"Ikan",pron:"/fɪʃ/",emoji:"🐟",ex:"Fresh fish is sold here."},
+{en:"Meat",id:"Daging",pron:"/miːt/",emoji:"🥩",ex:"I buy meat for dinner."},
+{en:"Egg",id:"Telur",pron:"/eɡ/",emoji:"🥚",ex:"I need a dozen eggs."},
+{en:"Rice",id:"Beras",pron:"/raɪs/",emoji:"🌾",ex:"Rice is a staple food in Indonesia."},
+{en:"Onion",id:"Bawang",pron:"/ˈʌnjən/",emoji:"🧅",ex:"I need an onion for the soup."},
+{en:"Garlic",id:"Bawang putih",pron:"/ˈɡɑːrlɪk/",emoji:"🧄",ex:"Add garlic for flavor."},
+{en:"Tofu",id:"Tahu",pron:"/ˈtoʊfuː/",emoji:"🫙",ex:"Tofu is made from soybeans."},
+{en:"Seller",id:"Penjual",pron:"/ˈselər/",emoji:"🧑‍🤝‍🧑",ex:"The seller is very friendly."},
+{en:"Buyer",id:"Pembeli",pron:"/ˈbaɪər/",emoji:"🛍️",ex:"The buyer paid in cash."},
+{en:"Price",id:"Harga",pron:"/praɪs/",emoji:"💰",ex:"What is the price of this?"},
+{en:"Basket",id:"Keranjang",pron:"/ˈbæskɪt/",emoji:"🧺",ex:"She carries a basket."},
+{en:"Change",id:"Uang kembalian",pron:"/tʃeɪndʒ/",emoji:"💵",ex:"Here is your change."},
+{en:"Spice",id:"Rempah-rempah",pron:"/spaɪs/",emoji:"🌶️",ex:"This food has many spices."},
+{en:"Chili",id:"Cabai",pron:"/ˈtʃɪli/",emoji:"🌶️",ex:"This chili is very hot."},
+{en:"Tomato",id:"Tomat",pron:"/təˈmɑːtoʊ/",emoji:"🍅",ex:"I need two tomatoes."},
+{en:"Potato",id:"Kentang",pron:"/pəˈteɪtoʊ/",emoji:"🥔",ex:"I bought a bag of potatoes."},
+{en:"Carrot",id:"Wortel",pron:"/ˈkærət/",emoji:"🥕",ex:"Carrots are good for your eyes."},
+{en:"Corn",id:"Jagung",pron:"/kɔːrn/",emoji:"🌽",ex:"Boiled corn is delicious."},
+{en:"Banana",id:"Pisang",pron:"/bəˈnɑːnə/",emoji:"🍌",ex:"I eat a banana every morning."},
+{en:"Mango",id:"Mangga",pron:"/ˈmæŋɡoʊ/",emoji:"🥭",ex:"Indonesian mangoes are sweet."},
+{en:"Coconut",id:"Kelapa",pron:"/ˈkoʊkənʌt/",emoji:"🥥",ex:"Coconut water is refreshing."},
+{en:"Tempeh",id:"Tempe",pron:"/ˈtempeɪ/",emoji:"🫙",ex:"Tempeh is made from fermented soybeans."},
+{en:"Receipt",id:"Kuitansi / Struk",pron:"/rɪˈsiːt/",emoji:"🧾",ex:"Do you have a receipt?"}
+],
+"Kantor":[
+{en:"Computer",id:"Komputer",pron:"/kəmˈpjuːtər/",emoji:"💻",ex:"I work on a computer all day."},
+{en:"Printer",id:"Printer",pron:"/ˈprɪntər/",emoji:"🖨️",ex:"Please print this document."},
+{en:"Telephone",id:"Telepon",pron:"/ˈtelɪfoʊn/",emoji:"📞",ex:"The telephone is ringing."},
+{en:"Stapler",id:"Stapler",pron:"/ˈsteɪplər/",emoji:"🖇️",ex:"I staple papers together."},
+{en:"File",id:"Berkas",pron:"/faɪl/",emoji:"📁",ex:"Please put it in the file."},
+{en:"Meeting",id:"Rapat",pron:"/ˈmiːtɪŋ/",emoji:"👥",ex:"We have a meeting at 9 AM."},
+{en:"Boss",id:"Atasan / Bos",pron:"/bɒs/",emoji:"👔",ex:"My boss is very strict."},
+{en:"Employee",id:"Karyawan",pron:"/ɪmˈplɔɪiː/",emoji:"🧑‍💻",ex:"The company has 100 employees."},
+{en:"Salary",id:"Gaji",pron:"/ˈsæləri/",emoji:"💰",ex:"I receive my salary every month."},
+{en:"Report",id:"Laporan",pron:"/rɪˈpɔːrt/",emoji:"📄",ex:"I need to submit a report."},
+{en:"Deadline",id:"Batas waktu",pron:"/ˈdedlaɪn/",emoji:"⏰",ex:"The deadline is tomorrow."},
+{en:"Schedule",id:"Jadwal",pron:"/ˈʃedʒuːl/",emoji:"📅",ex:"Check the schedule for today."},
+{en:"Cabinet",id:"Lemari arsip",pron:"/ˈkæbɪnɪt/",emoji:"🗄️",ex:"Files are kept in the cabinet."},
+{en:"Office",id:"Kantor",pron:"/ˈɒfɪs/",emoji:"🏢",ex:"I go to the office every weekday."},
+{en:"Photocopy",id:"Fotokopi",pron:"/ˈfoʊtəkɒpi/",emoji:"📑",ex:"Can you make a photocopy of this?"},
+{en:"Laptop",id:"Laptop",pron:"/ˈlæptɒp/",emoji:"💻",ex:"I bring my laptop to work."},
+{en:"Keyboard",id:"Keyboard / Papan ketik",pron:"/ˈkiːbɔːrd/",emoji:"⌨️",ex:"My keyboard is wireless."},
+{en:"Mouse",id:"Mouse komputer",pron:"/maʊs/",emoji:"🖱️",ex:"I need a new mouse."},
+{en:"Projector",id:"Proyektor",pron:"/prəˈdʒektər/",emoji:"📽️",ex:"Please set up the projector."},
+{en:"Whiteboard",id:"Papan tulis putih",pron:"/ˈwaɪtbɔːrd/",emoji:"⬜",ex:"The manager writes on the whiteboard."},
+{en:"Business card",id:"Kartu nama",pron:"/ˈbɪznɪs kɑːrd/",emoji:"📇",ex:"Here is my business card."},
+{en:"Contract",id:"Kontrak",pron:"/ˈkɒntrækt/",emoji:"📝",ex:"Please sign the contract."},
+{en:"Invoice",id:"Faktur / Invoice",pron:"/ˈɪnvɔɪs/",emoji:"🧾",ex:"Send the invoice to the client."},
+{en:"Department",id:"Departemen / Divisi",pron:"/dɪˈpɑːrtmənt/",emoji:"🏢",ex:"Which department do you work in?"},
+{en:"Overtime",id:"Lembur",pron:"/ˈoʊvərtaɪm/",emoji:"⏰",ex:"I have to work overtime today."}
+],
+"Angka":[
+{en:"Zero",id:"Nol",pron:"/ˈzɪroʊ/",emoji:"0️⃣",ex:"The score is zero to zero."},
+{en:"One",id:"Satu",pron:"/wʌn/",emoji:"1️⃣",ex:"I have one sister."},
+{en:"Two",id:"Dua",pron:"/tuː/",emoji:"2️⃣",ex:"I need two pens."},
+{en:"Three",id:"Tiga",pron:"/θriː/",emoji:"3️⃣",ex:"There are three cats."},
+{en:"Four",id:"Empat",pron:"/fɔːr/",emoji:"4️⃣",ex:"I have four books."},
+{en:"Five",id:"Lima",pron:"/faɪv/",emoji:"5️⃣",ex:"We have five minutes left."},
+{en:"Six",id:"Enam",pron:"/sɪks/",emoji:"6️⃣",ex:"She is six years old."},
+{en:"Seven",id:"Tujuh",pron:"/ˈsevən/",emoji:"7️⃣",ex:"I wake up at seven."},
+{en:"Eight",id:"Delapan",pron:"/eɪt/",emoji:"8️⃣",ex:"There are eight students."},
+{en:"Nine",id:"Sembilan",pron:"/naɪn/",emoji:"9️⃣",ex:"The class starts at nine."},
+{en:"Ten",id:"Sepuluh",pron:"/ten/",emoji:"🔟",ex:"I scored ten out of ten."},
+{en:"Eleven",id:"Sebelas",pron:"/ɪˈlevən/",emoji:"1️⃣1️⃣",ex:"There are eleven players."},
+{en:"Twelve",id:"Dua belas",pron:"/twelv/",emoji:"1️⃣2️⃣",ex:"There are twelve months in a year."},
+{en:"Twenty",id:"Dua puluh",pron:"/ˈtwenti/",emoji:"✌️",ex:"She is twenty years old."},
+{en:"Thirty",id:"Tiga puluh",pron:"/ˈθɜːrti/",emoji:"3️⃣0️⃣",ex:"I run thirty minutes every day."},
+{en:"Fifty",id:"Lima puluh",pron:"/ˈfɪfti/",emoji:"5️⃣0️⃣",ex:"There are fifty states in the USA."},
+{en:"Hundred",id:"Seratus",pron:"/ˈhʌndrəd/",emoji:"💯",ex:"I got a hundred on the test."},
+{en:"Thousand",id:"Seribu",pron:"/ˈθaʊzənd/",emoji:"🔢",ex:"A thousand people were there."},
+{en:"Million",id:"Satu juta",pron:"/ˈmɪljən/",emoji:"💰",ex:"He earned one million dollars."},
+{en:"First",id:"Pertama",pron:"/fɜːrst/",emoji:"🥇",ex:"She came in first place."},
+{en:"Second",id:"Kedua",pron:"/ˈsekənd/",emoji:"🥈",ex:"He finished in second place."},
+{en:"Third",id:"Ketiga",pron:"/θɜːrd/",emoji:"🥉",ex:"She was third in the race."},
+{en:"Last",id:"Terakhir",pron:"/læst/",emoji:"🔚",ex:"This is the last question."},
+{en:"Half",id:"Setengah",pron:"/hɑːf/",emoji:"➗",ex:"I ate half of the pizza."},
+{en:"Double",id:"Dua kali lipat",pron:"/ˈdʌbəl/",emoji:"✖️",ex:"Double the recipe for more people."}
+],
+"Warna":[
+{en:"Red",id:"Merah",pron:"/red/",emoji:"🔴",ex:"The apple is red."},
+{en:"Blue",id:"Biru",pron:"/bluː/",emoji:"🔵",ex:"The sky is blue."},
+{en:"Green",id:"Hijau",pron:"/ɡriːn/",emoji:"🟢",ex:"The grass is green."},
+{en:"Yellow",id:"Kuning",pron:"/ˈjeloʊ/",emoji:"🟡",ex:"The banana is yellow."},
+{en:"Black",id:"Hitam",pron:"/blæk/",emoji:"⚫",ex:"The board is black."},
+{en:"White",id:"Putih",pron:"/waɪt/",emoji:"⚪",ex:"Her dress is white."},
+{en:"Orange",id:"Oranye",pron:"/ˈɒrɪndʒ/",emoji:"🟠",ex:"I love orange juice."},
+{en:"Purple",id:"Ungu",pron:"/ˈpɜːrpəl/",emoji:"🟣",ex:"She likes purple flowers."},
+{en:"Pink",id:"Merah muda",pron:"/pɪŋk/",emoji:"🩷",ex:"The baby's clothes are pink."},
+{en:"Brown",id:"Coklat",pron:"/braʊn/",emoji:"🟤",ex:"The table is brown."},
+{en:"Gray",id:"Abu-abu",pron:"/ɡreɪ/",emoji:"🩶",ex:"The sky looks gray today."},
+{en:"Gold",id:"Emas",pron:"/ɡoʊld/",emoji:"🥇",ex:"She won the gold medal."},
+{en:"Silver",id:"Perak",pron:"/ˈsɪlvər/",emoji:"🥈",ex:"The ring is made of silver."},
+{en:"Dark blue",id:"Biru tua / Navy",pron:"/dɑːrk bluː/",emoji:"🔵",ex:"He wears a dark blue jacket."},
+{en:"Light green",id:"Hijau muda",pron:"/laɪt ɡriːn/",emoji:"🍃",ex:"The walls are light green."},
+{en:"Turquoise",id:"Toska / Hijau-biru",pron:"/ˈtɜːrkwɔɪz/",emoji:"🩵",ex:"The sea is turquoise."},
+{en:"Maroon",id:"Merah tua",pron:"/məˈruːn/",emoji:"🟥",ex:"She wears a maroon blouse."},
+{en:"Beige",id:"Krem / Beige",pron:"/beɪʒ/",emoji:"🟨",ex:"The wall is painted beige."},
+{en:"Transparent",id:"Transparan / Bening",pron:"/trænsˈpærənt/",emoji:"🫧",ex:"The glass is transparent."},
+{en:"Colorful",id:"Berwarna-warni",pron:"/ˈkʌlərfəl/",emoji:"🌈",ex:"The rainbow is colorful."}
+],
+"Makanan":[
+{en:"Rice",id:"Nasi",pron:"/raɪs/",emoji:"🍚",ex:"I eat rice every day."},
+{en:"Noodle",id:"Mie",pron:"/ˈnuːdəl/",emoji:"🍜",ex:"I love eating noodle soup."},
+{en:"Bread",id:"Roti",pron:"/bred/",emoji:"🍞",ex:"I eat bread for breakfast."},
+{en:"Cake",id:"Kue",pron:"/keɪk/",emoji:"🎂",ex:"She baked a chocolate cake."},
+{en:"Soup",id:"Sup",pron:"/suːp/",emoji:"🍲",ex:"The soup is hot and delicious."},
+{en:"Chicken",id:"Ayam",pron:"/ˈtʃɪkɪn/",emoji:"🍗",ex:"Fried chicken is my favorite."},
+{en:"Milk",id:"Susu",pron:"/mɪlk/",emoji:"🥛",ex:"I drink milk every morning."},
+{en:"Water",id:"Air",pron:"/ˈwɔːtər/",emoji:"💧",ex:"Drink more water every day."},
+{en:"Juice",id:"Jus",pron:"/dʒuːs/",emoji:"🧃",ex:"I drink orange juice."},
+{en:"Coffee",id:"Kopi",pron:"/ˈkɒfi/",emoji:"☕",ex:"Dad drinks coffee every morning."},
+{en:"Tea",id:"Teh",pron:"/tiː/",emoji:"🍵",ex:"Mom loves drinking tea."},
+{en:"Ice cream",id:"Es krim",pron:"/ˈaɪs kriːm/",emoji:"🍦",ex:"Ice cream is cold and sweet."},
+{en:"Pizza",id:"Pizza",pron:"/ˈpiːtsə/",emoji:"🍕",ex:"We ordered pizza for dinner."},
+{en:"Salad",id:"Salad",pron:"/ˈsæləd/",emoji:"🥗",ex:"I have salad for lunch."},
+{en:"Cookie",id:"Kue kering",pron:"/ˈkʊki/",emoji:"🍪",ex:"I ate three cookies."},
+{en:"Egg",id:"Telur",pron:"/eɡ/",emoji:"🍳",ex:"I fry an egg for breakfast."},
+{en:"Fish",id:"Ikan",pron:"/fɪʃ/",emoji:"🐟",ex:"Grilled fish is healthy."},
+{en:"Vegetable",id:"Sayuran",pron:"/ˈvedʒtəbəl/",emoji:"🥦",ex:"Eat more vegetables!"},
+{en:"Fruit",id:"Buah",pron:"/fruːt/",emoji:"🍎",ex:"Fruit is good for health."},
+{en:"Snack",id:"Camilan",pron:"/snæk/",emoji:"🍿",ex:"I eat snacks while watching TV."},
+{en:"Dessert",id:"Hidangan penutup",pron:"/dɪˈzɜːrt/",emoji:"🍮",ex:"What dessert do you want?"},
+{en:"Breakfast",id:"Sarapan",pron:"/ˈbrekfəst/",emoji:"🍳",ex:"I never skip breakfast."},
+{en:"Lunch",id:"Makan siang",pron:"/lʌntʃ/",emoji:"🍱",ex:"What did you have for lunch?"},
+{en:"Dinner",id:"Makan malam",pron:"/ˈdɪnər/",emoji:"🍽️",ex:"Dinner is ready!"},
+{en:"Spicy",id:"Pedas",pron:"/ˈspaɪsi/",emoji:"🌶️",ex:"This food is very spicy."}
+],
+"Tubuh":[
+{en:"Head",id:"Kepala",pron:"/hed/",emoji:"👤",ex:"I have a headache."},
+{en:"Eye",id:"Mata",pron:"/aɪ/",emoji:"👁️",ex:"Her eyes are brown."},
+{en:"Nose",id:"Hidung",pron:"/noʊz/",emoji:"👃",ex:"My nose is running."},
+{en:"Mouth",id:"Mulut",pron:"/maʊθ/",emoji:"👄",ex:"Open your mouth wide."},
+{en:"Ear",id:"Telinga",pron:"/ɪər/",emoji:"👂",ex:"I can't hear — my ear hurts."},
+{en:"Hand",id:"Tangan",pron:"/hænd/",emoji:"✋",ex:"Please wash your hands."},
+{en:"Finger",id:"Jari",pron:"/ˈfɪŋɡər/",emoji:"☝️",ex:"I have ten fingers."},
+{en:"Leg",id:"Kaki",pron:"/leɡ/",emoji:"🦵",ex:"My leg is tired."},
+{en:"Foot",id:"Telapak kaki",pron:"/fʊt/",emoji:"🦶",ex:"My foot is sore."},
+{en:"Back",id:"Punggung",pron:"/bæk/",emoji:"🔙",ex:"My back hurts from sitting."},
+{en:"Stomach",id:"Perut",pron:"/ˈstʌmək/",emoji:"🤰",ex:"My stomach is growling."},
+{en:"Shoulder",id:"Bahu",pron:"/ˈʃoʊldər/",emoji:"💪",ex:"She tapped me on the shoulder."},
+{en:"Knee",id:"Lutut",pron:"/niː/",emoji:"🦵",ex:"I hurt my knee playing football."},
+{en:"Tooth",id:"Gigi",pron:"/tuːθ/",emoji:"🦷",ex:"Brush your teeth twice a day."},
+{en:"Hair",id:"Rambut",pron:"/her/",emoji:"💇",ex:"She has long black hair."},
+{en:"Neck",id:"Leher",pron:"/nek/",emoji:"🦒",ex:"My neck is stiff."},
+{en:"Chest",id:"Dada",pron:"/tʃest/",emoji:"💗",ex:"He has a chest pain."},
+{en:"Arm",id:"Lengan",pron:"/ɑːrm/",emoji:"💪",ex:"She broke her arm."},
+{en:"Elbow",id:"Siku",pron:"/ˈelboʊ/",emoji:"🦾",ex:"I bumped my elbow on the table."},
+{en:"Wrist",id:"Pergelangan tangan",pron:"/rɪst/",emoji:"⌚",ex:"My wrist hurts."},
+{en:"Palm",id:"Telapak tangan",pron:"/pɑːm/",emoji:"🤚",ex:"Read the lines on your palm."},
+{en:"Thumb",id:"Ibu jari",pron:"/θʌm/",emoji:"👍",ex:"Give a thumbs up!"},
+{en:"Ankle",id:"Pergelangan kaki",pron:"/ˈæŋkəl/",emoji:"🦶",ex:"I twisted my ankle."},
+{en:"Skin",id:"Kulit",pron:"/skɪn/",emoji:"🫀",ex:"Her skin is smooth."},
+{en:"Blood",id:"Darah",pron:"/blʌd/",emoji:"🩸",ex:"He donated blood yesterday."}
+],
+"Hewan":[
+{en:"Cat",id:"Kucing",pron:"/kæt/",emoji:"🐱",ex:"My cat is very playful."},
+{en:"Dog",id:"Anjing",pron:"/dɒɡ/",emoji:"🐶",ex:"The dog wags its tail."},
+{en:"Bird",id:"Burung",pron:"/bɜːrd/",emoji:"🐦",ex:"The bird sings every morning."},
+{en:"Fish",id:"Ikan",pron:"/fɪʃ/",emoji:"🐟",ex:"The fish swims fast."},
+{en:"Rabbit",id:"Kelinci",pron:"/ˈræbɪt/",emoji:"🐰",ex:"The rabbit has long ears."},
+{en:"Cow",id:"Sapi",pron:"/kaʊ/",emoji:"🐄",ex:"The cow gives us milk."},
+{en:"Chicken",id:"Ayam",pron:"/ˈtʃɪkɪn/",emoji:"🐔",ex:"The chicken lays eggs."},
+{en:"Duck",id:"Bebek",pron:"/dʌk/",emoji:"🦆",ex:"Ducks love to swim."},
+{en:"Goat",id:"Kambing",pron:"/ɡoʊt/",emoji:"🐐",ex:"The goat eats grass."},
+{en:"Horse",id:"Kuda",pron:"/hɔːrs/",emoji:"🐴",ex:"The horse runs fast."},
+{en:"Elephant",id:"Gajah",pron:"/ˈelɪfənt/",emoji:"🐘",ex:"The elephant is the largest land animal."},
+{en:"Tiger",id:"Harimau",pron:"/ˈtaɪɡər/",emoji:"🐯",ex:"The tiger is a wild animal."},
+{en:"Monkey",id:"Monyet",pron:"/ˈmʌŋki/",emoji:"🐒",ex:"The monkey climbs the tree."},
+{en:"Snake",id:"Ular",pron:"/sneɪk/",emoji:"🐍",ex:"The snake is dangerous."},
+{en:"Frog",id:"Katak",pron:"/frɒɡ/",emoji:"🐸",ex:"The frog jumps into the water."},
+{en:"Butterfly",id:"Kupu-kupu",pron:"/ˈbʌtəflaɪ/",emoji:"🦋",ex:"The butterfly has colorful wings."},
+{en:"Bee",id:"Lebah",pron:"/biː/",emoji:"🐝",ex:"The bee makes honey."},
+{en:"Ant",id:"Semut",pron:"/ænt/",emoji:"🐜",ex:"Ants are very hard workers."},
+{en:"Crocodile",id:"Buaya",pron:"/ˈkrɒkədaɪl/",emoji:"🐊",ex:"Crocodiles live near rivers."},
+{en:"Parrot",id:"Burung beo",pron:"/ˈpærət/",emoji:"🦜",ex:"The parrot can talk."},
+{en:"Turtle",id:"Kura-kura",pron:"/ˈtɜːrtəl/",emoji:"🐢",ex:"The turtle moves slowly."},
+{en:"Lion",id:"Singa",pron:"/ˈlaɪən/",emoji:"🦁",ex:"The lion is the king of the jungle."},
+{en:"Deer",id:"Rusa",pron:"/dɪər/",emoji:"🦌",ex:"The deer runs through the forest."},
+{en:"Sheep",id:"Domba",pron:"/ʃiːp/",emoji:"🐑",ex:"The sheep has white wool."},
+{en:"Pig",id:"Babi",pron:"/pɪɡ/",emoji:"🐷",ex:"The pig rolls in the mud."}
+],
+"Profesi":[
+{en:"Teacher",id:"Guru",pron:"/ˈtiːtʃər/",emoji:"👩‍🏫",ex:"The teacher explains the lesson."},
+{en:"Doctor",id:"Dokter",pron:"/ˈdɒktər/",emoji:"👨‍⚕️",ex:"The doctor checks my health."},
+{en:"Nurse",id:"Perawat",pron:"/nɜːrs/",emoji:"👩‍⚕️",ex:"The nurse gives me medicine."},
+{en:"Police",id:"Polisi",pron:"/pəˈliːs/",emoji:"👮",ex:"The police keep us safe."},
+{en:"Firefighter",id:"Petugas pemadam kebakaran",pron:"/ˈfaɪərfaɪtər/",emoji:"👨‍🚒",ex:"The firefighter puts out the fire."},
+{en:"Chef",id:"Koki / Chef",pron:"/ʃef/",emoji:"👨‍🍳",ex:"The chef cooks delicious food."},
+{en:"Engineer",id:"Insinyur / Teknisi",pron:"/ˌendʒɪˈnɪər/",emoji:"👨‍🔧",ex:"The engineer designs buildings."},
+{en:"Farmer",id:"Petani",pron:"/ˈfɑːrmər/",emoji:"👨‍🌾",ex:"The farmer grows rice."},
+{en:"Pilot",id:"Pilot",pron:"/ˈpaɪlət/",emoji:"👨‍✈️",ex:"The pilot flies the plane."},
+{en:"Driver",id:"Pengemudi / Sopir",pron:"/ˈdraɪvər/",emoji:"🚗",ex:"The driver takes me to school."},
+{en:"Artist",id:"Seniman",pron:"/ˈɑːrtɪst/",emoji:"👨‍🎨",ex:"The artist paints beautiful pictures."},
+{en:"Singer",id:"Penyanyi",pron:"/ˈsɪŋər/",emoji:"🎤",ex:"The singer has a beautiful voice."},
+{en:"Soldier",id:"Prajurit / Tentara",pron:"/ˈsoʊldʒər/",emoji:"💂",ex:"The soldier guards the country."},
+{en:"Lawyer",id:"Pengacara",pron:"/ˈlɔːjər/",emoji:"👨‍⚖️",ex:"The lawyer defends the client."},
+{en:"Journalist",id:"Jurnalis / Wartawan",pron:"/ˈdʒɜːrnəlɪst/",emoji:"📰",ex:"The journalist writes the news."},
+{en:"Scientist",id:"Ilmuwan",pron:"/ˈsaɪəntɪst/",emoji:"👨‍🔬",ex:"The scientist does experiments."},
+{en:"Accountant",id:"Akuntan",pron:"/əˈkaʊntənt/",emoji:"🧮",ex:"The accountant manages the money."},
+{en:"Dentist",id:"Dokter gigi",pron:"/ˈdentɪst/",emoji:"🦷",ex:"The dentist checks my teeth."},
+{en:"Pharmacist",id:"Apoteker",pron:"/ˈfɑːrməsɪst/",emoji:"💊",ex:"The pharmacist gives me medicine."},
+{en:"Architect",id:"Arsitek",pron:"/ˈɑːrkɪtekt/",emoji:"🏛️",ex:"The architect designs the building."},
+{en:"Mechanic",id:"Mekanik / Montir",pron:"/məˈkænɪk/",emoji:"🔧",ex:"The mechanic fixes my car."},
+{en:"Librarian",id:"Pustakawan",pron:"/laɪˈbreriən/",emoji:"📚",ex:"The librarian helps me find books."},
+{en:"Photographer",id:"Fotografer",pron:"/fəˈtɒɡrəfər/",emoji:"📷",ex:"The photographer takes great photos."},
+{en:"Programmer",id:"Programmer / Pemrogram",pron:"/ˈproʊɡræmər/",emoji:"👨‍💻",ex:"The programmer writes code."},
+{en:"Entrepreneur",id:"Wirausahawan",pron:"/ˌɒntrəprəˈnɜːr/",emoji:"💼",ex:"The entrepreneur starts a new business."}
+],
+"Transportasi":[
+{en:"Car",id:"Mobil",pron:"/kɑːr/",emoji:"🚗",ex:"I go to school by car."},
+{en:"Bus",id:"Bus",pron:"/bʌs/",emoji:"🚌",ex:"I take the bus every day."},
+{en:"Train",id:"Kereta api",pron:"/treɪn/",emoji:"🚂",ex:"The train is very fast."},
+{en:"Airplane",id:"Pesawat terbang",pron:"/ˈerpleɪn/",emoji:"✈️",ex:"We fly by airplane to Bali."},
+{en:"Ship",id:"Kapal",pron:"/ʃɪp/",emoji:"🚢",ex:"The ship sails across the ocean."},
+{en:"Motorcycle",id:"Sepeda motor",pron:"/ˈmoʊtərsaɪkəl/",emoji:"🏍️",ex:"My father rides a motorcycle."},
+{en:"Bicycle",id:"Sepeda",pron:"/ˈbaɪsɪkəl/",emoji:"🚲",ex:"I ride a bicycle on Sundays."},
+{en:"Taxi",id:"Taksi",pron:"/ˈtæksi/",emoji:"🚕",ex:"I take a taxi to the airport."},
+{en:"Truck",id:"Truk",pron:"/trʌk/",emoji:"🚛",ex:"The truck carries heavy goods."},
+{en:"Ambulance",id:"Ambulans",pron:"/ˈæmbjʊləns/",emoji:"🚑",ex:"The ambulance rushes to the hospital."},
+{en:"Fire truck",id:"Truk pemadam kebakaran",pron:"/faɪər trʌk/",emoji:"🚒",ex:"The fire truck arrives quickly."},
+{en:"Helicopter",id:"Helikopter",pron:"/ˈhelɪkɒptər/",emoji:"🚁",ex:"The helicopter hovers above us."},
+{en:"Boat",id:"Perahu",pron:"/boʊt/",emoji:"⛵",ex:"We ride a boat on the river."},
+{en:"Submarine",id:"Kapal selam",pron:"/ˈsʌbməriːn/",emoji:"🤿",ex:"The submarine dives deep."},
+{en:"Scooter",id:"Skuter",pron:"/ˈskuːtər/",emoji:"🛵",ex:"I ride a scooter to school."},
+{en:"Tram",id:"Trem",pron:"/træm/",emoji:"🚋",ex:"The tram runs through the city."},
+{en:"Subway",id:"Kereta bawah tanah",pron:"/ˈsʌbweɪ/",emoji:"🚇",ex:"I take the subway to work."},
+{en:"Ferry",id:"Feri / Kapal penyeberangan",pron:"/ˈferi/",emoji:"⛴️",ex:"We cross the island by ferry."},
+{en:"Cable car",id:"Kereta gantung",pron:"/ˈkeɪbəl kɑːr/",emoji:"🚡",ex:"The cable car goes up the mountain."},
+{en:"Pickup truck",id:"Truk pikap",pron:"/ˈpɪkʌp trʌk/",emoji:"🛻",ex:"Dad uses a pickup truck for work."},
+{en:"Van",id:"Minivan / Van",pron:"/væn/",emoji:"🚐",ex:"We travel in a van."},
+{en:"Rocket",id:"Roket",pron:"/ˈrɒkɪt/",emoji:"🚀",ex:"The rocket launches into space."},
+{en:"Station",id:"Stasiun",pron:"/ˈsteɪʃən/",emoji:"🏢",ex:"Meet me at the station."},
+{en:"Airport",id:"Bandara",pron:"/ˈerˌpɔːrt/",emoji:"🛫",ex:"We arrived at the airport early."},
+{en:"Traffic jam",id:"Kemacetan lalu lintas",pron:"/ˈtræfɪk dʒæm/",emoji:"🚦",ex:"There is a traffic jam downtown."}
+],
+"Alam":[
+{en:"Mountain",id:"Gunung",pron:"/ˈmaʊntən/",emoji:"⛰️",ex:"We climbed the mountain."},
+{en:"River",id:"Sungai",pron:"/ˈrɪvər/",emoji:"🏞️",ex:"The river flows to the sea."},
+{en:"Sea",id:"Laut",pron:"/siː/",emoji:"🌊",ex:"I love swimming in the sea."},
+{en:"Forest",id:"Hutan",pron:"/ˈfɒrɪst/",emoji:"🌲",ex:"The forest is full of animals."},
+{en:"Beach",id:"Pantai",pron:"/biːtʃ/",emoji:"🏖️",ex:"We played at the beach."},
+{en:"Lake",id:"Danau",pron:"/leɪk/",emoji:"🏞️",ex:"The lake is calm and beautiful."},
+{en:"Waterfall",id:"Air terjun",pron:"/ˈwɔːtərfɔːl/",emoji:"💦",ex:"The waterfall is magnificent."},
+{en:"Island",id:"Pulau",pron:"/ˈaɪlənd/",emoji:"🏝️",ex:"Indonesia has many islands."},
+{en:"Valley",id:"Lembah",pron:"/ˈvæli/",emoji:"🏔️",ex:"The valley is between two mountains."},
+{en:"Desert",id:"Gurun",pron:"/ˈdezərt/",emoji:"🏜️",ex:"The desert is very hot and dry."},
+{en:"Volcano",id:"Gunung berapi",pron:"/vɒlˈkeɪnoʊ/",emoji:"🌋",ex:"The volcano erupted last year."},
+{en:"Cave",id:"Gua",pron:"/keɪv/",emoji:"🦇",ex:"We explored the cave."},
+{en:"Sky",id:"Langit",pron:"/skaɪ/",emoji:"🌤️",ex:"The sky is clear and blue."},
+{en:"Sun",id:"Matahari",pron:"/sʌn/",emoji:"☀️",ex:"The sun sets in the west."},
+{en:"Moon",id:"Bulan",pron:"/muːn/",emoji:"🌙",ex:"The moon shines at night."},
+{en:"Star",id:"Bintang",pron:"/stɑːr/",emoji:"⭐",ex:"I can see many stars tonight."},
+{en:"Cloud",id:"Awan",pron:"/klaʊd/",emoji:"☁️",ex:"Dark clouds appear before rain."},
+{en:"Rain",id:"Hujan",pron:"/reɪn/",emoji:"🌧️",ex:"It rains every afternoon here."},
+{en:"Wind",id:"Angin",pron:"/wɪnd/",emoji:"💨",ex:"The wind is very strong today."},
+{en:"Thunder",id:"Petir / Guntur",pron:"/ˈθʌndər/",emoji:"⛈️",ex:"I'm scared of thunder."},
+{en:"Earthquake",id:"Gempa bumi",pron:"/ˈɜːrθkweɪk/",emoji:"🌍",ex:"There was an earthquake last night."},
+{en:"Flood",id:"Banjir",pron:"/flʌd/",emoji:"🌊",ex:"The flood damaged many houses."},
+{en:"Soil",id:"Tanah",pron:"/sɔɪl/",emoji:"🌱",ex:"The soil here is very fertile."},
+{en:"Rock",id:"Batu / Bebatuan",pron:"/rɒk/",emoji:"🪨",ex:"There are big rocks on the hill."},
+{en:"Grass",id:"Rumput",pron:"/ɡrɑːs/",emoji:"🌿",ex:"The grass is very green."}
+]
+};
+
+const CATS=Object.keys(ALL);
+let cat=CATS[0],activeTab='flashcard',totalScore=0;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function updateScorePill(){document.getElementById('scorePill').textContent='Skor: '+totalScore}
+function renderCats(){
+  const el=document.getElementById('catScroll');el.innerHTML='';
+  CATS.forEach(c=>{
+    const btn=document.createElement('button');
+    btn.className='chip'+(c===cat?' active':'');
+    btn.textContent=c;
+    btn.onclick=()=>{cat=c;renderCats();if(activeTab==='flashcard')startFlashcard();else startQuiz()};
+    el.appendChild(btn);
+  });
+}
+function switchTab(t){
+  activeTab=t;
+  document.getElementById('tabFC').classList.toggle('active',t==='flashcard');
+  document.getElementById('tabQZ').classList.toggle('active',t==='quiz');
+  if(t==='flashcard')startFlashcard();else startQuiz();
+}
+
+/* FLASHCARD */
+let fcCards=[],fcIdx=0,fcFlipped=false,fcKnow=0,fcReview=0;
+function startFlashcard(){fcCards=shuffle([...ALL[cat]]);fcIdx=0;fcFlipped=false;fcKnow=0;fcReview=0;renderFC()}
+function renderFC(){
+  const body=document.getElementById('mainBody');
+  if(fcIdx>=fcCards.length){
+    body.innerHTML=`<div class="mode-row"><button class="mode-btn active" onclick="startFlashcard()"><i class="ti ti-refresh"></i> Ulangi</button><button class="mode-btn" onclick="switchTab('quiz')"><i class="ti ti-target"></i> Ke Kuis</button></div><div class="done-card"><div class="done-emoji">🎉</div><div class="done-title">Kategori selesai!</div><div class="done-sub">Kamu sudah melihat semua ${fcCards.length} kata dalam kategori <b>${cat}</b>.<br>Sudah tahu: ${fcKnow} · Perlu ulang: ${fcReview}</div></div>`;return;
+  }
+  const card=fcCards[fcIdx];
+  const pct=Math.round((fcIdx/fcCards.length)*100);
+  body.innerHTML=`<div class="prog-info"><span>Kartu ${fcIdx+1} dari ${fcCards.length}</span><span>${pct}%</span></div><div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div><div class="flashcard" id="fc" onclick="fcFlip()"><div class="fc-inner"><div class="fc-face fc-front"><span class="fc-emoji">${card.emoji}</span><span class="fc-word">${card.en}</span><span class="fc-pron">${card.pron}</span><span class="fc-hint">Ketuk untuk lihat arti</span></div><div class="fc-face fc-back"><span class="fc-emoji">${card.emoji}</span><span class="fc-id">${card.id}</span><span class="fc-ex">"${card.ex}"</span><span class="fc-hint">Contoh kalimat</span></div></div></div><div class="nav-row"><button class="nav-btn" onclick="fcPrev()" ${fcIdx===0?'disabled':''} aria-label="Sebelumnya"><i class="ti ti-chevron-left"></i></button><div class="act-row"><button class="act-btn btn-know" onclick="fcMark('know')"><i class="ti ti-check"></i> Tahu</button><button class="act-btn btn-review" onclick="fcMark('review')"><i class="ti ti-refresh"></i> Ulang</button></div><button class="nav-btn" onclick="fcNext()" aria-label="Berikutnya"><i class="ti ti-chevron-right"></i></button></div><div class="fc-stats"><div class="fc-stat"><div class="fc-stat-lbl">✅ Sudah tahu</div><div class="fc-stat-val">${fcKnow}</div></div><div class="fc-stat"><div class="fc-stat-lbl">🔄 Perlu ulang</div><div class="fc-stat-val">${fcReview}</div></div></div>`;
+  fcFlipped=false;
+}
+function fcFlip(){fcFlipped=!fcFlipped;const fc=document.getElementById('fc');if(fc)fc.classList.toggle('flipped',fcFlipped)}
+function fcPrev(){if(fcIdx>0){fcIdx--;renderFC()}}
+function fcNext(){if(fcIdx<fcCards.length){fcIdx++;renderFC()}}
+function fcMark(t){if(t==='know')fcKnow++;else fcReview++;fcIdx++;renderFC()}
+
+/* QUIZ */
+const QUIZ_LEN=10;
+let qQ=[],qIdx=0,qScore=0,qCorrect=0,qWrong=0,qAnswered=false,qMode='EN';
+function startQuiz(){qIdx=0;qScore=0;qCorrect=0;qWrong=0;qAnswered=false;buildQQ();renderQBody()}
+function buildQQ(){
+  const pool=shuffle([...ALL[cat]]);
+  const allW=Object.values(ALL).flat();
+  qQ=pool.slice(0,Math.min(QUIZ_LEN,pool.length)).map(word=>{
+    const correct=qMode==='EN'?word.id:word.en;
+    const dist=shuffle(allW.filter(w=>(qMode==='EN'?w.id:w.en)!==correct)).slice(0,3).map(w=>qMode==='EN'?w.id:w.en);
+    return{word,correct,opts:shuffle([correct,...dist])};
+  });
+}
+function setQMode(m){qMode=m;startQuiz()}
+function renderQBody(){
+  const body=document.getElementById('mainBody');
+  if(qIdx>=qQ.length){renderQResult();return}
+  const q=qQ[qIdx];
+  const pct=Math.round((qIdx/qQ.length)*100);
+  const qText=qMode==='EN'?`<span class="q-word">${q.word.en}</span><span class="q-pron">${q.word.pron}</span>`:`<span class="q-word">${q.word.id}</span>`;
+  const instr=qMode==='EN'?'Apa artinya dalam bahasa Indonesia?':'Apa bahasa Inggrisnya?';
+  body.innerHTML=`<div class="mode-row"><button class="mode-btn${qMode==='EN'?' active':''}" onclick="setQMode('EN')">Tebak arti 🇮🇩</button><button class="mode-btn${qMode==='ID'?' active':''}" onclick="setQMode('ID')">Tebak Inggris 🇬🇧</button></div><div class="stats-row"><div class="stat"><div class="stat-lbl">Soal</div><div class="stat-val">${qIdx+1}/${qQ.length}</div></div><div class="stat"><div class="stat-lbl">Benar</div><div class="stat-val g">${qCorrect}</div></div><div class="stat"><div class="stat-lbl">Salah</div><div class="stat-val r">${qWrong}</div></div></div><div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div><div class="q-card"><div class="q-meta"><span class="q-badge">${cat}</span><span>${instr}</span></div><span class="q-emoji">${q.word.emoji}</span>${qText}</div><div class="opts" id="opts">${q.opts.map((o,i)=>`<button class="opt" id="o${i}" onclick="qPick(${i})">${o}</button>`).join('')}</div><div id="qfeedback"></div><div id="qnext"></div>`;
+  qAnswered=false;
+}
+function qPick(i){
+  if(qAnswered)return;qAnswered=true;
+  const q=qQ[qIdx];const chosen=q.opts[i];const ok=chosen===q.correct;
+  q.opts.forEach((o,j)=>{const b=document.getElementById('o'+j);b.classList.add('disabled');if(o===q.correct)b.classList.add('reveal');else if(j===i&&!ok)b.classList.add('wrong');});
+  if(ok){qCorrect++;qScore+=10;totalScore+=10;updateScorePill();document.getElementById('o'+i).classList.add('correct')}else qWrong++;
+  const fb=document.getElementById('qfeedback');
+  fb.className='feedback '+(ok?'correct':'wrong');
+  fb.innerHTML=ok?`<b>Benar! +10 poin 🎉</b><br>Contoh: <i>"${q.word.ex}"</i>`:`<b>Kurang tepat.</b> Jawaban: <b>${q.correct}</b><br>Contoh: <i>"${q.word.ex}"</i>`;
+  document.getElementById('qnext').innerHTML=`<button class="next-btn" onclick="qNext()" style="margin-top:10px">${qIdx===qQ.length-1?'Lihat hasil':'Soal berikutnya'} →</button>`;
+}
+function qNext(){qIdx++;qAnswered=false;renderQBody()}
+function renderQResult(){
+  const t=qQ.length,pct=Math.round((qCorrect/t)*100);
+  let em,ti,msg;
+  if(pct===100){em='🏆';ti='Sempurna!';msg='Luar biasa! Semua benar!'}
+  else if(pct>=80){em='🎉';ti='Bagus sekali!';msg='Hampir sempurna, terus semangat!'}
+  else if(pct>=60){em='👍';ti='Cukup baik!';msg='Lumayan! Latihan lagi ya.'}
+  else if(pct>=40){em='📚';ti='Terus belajar!';msg='Masih banyak yang perlu dipelajari!'}
+  else{em='💪';ti='Yuk coba lagi!';msg='Jangan menyerah, latihan membuat sempurna!'}
+  document.getElementById('mainBody').innerHTML=`<div class="mode-row"><button class="mode-btn${qMode==='EN'?' active':''}" onclick="setQMode('EN')">Tebak arti 🇮🇩</button><button class="mode-btn${qMode==='ID'?' active':''}" onclick="setQMode('ID')">Tebak Inggris 🇬🇧</button></div><div class="result-card"><div class="res-emoji">${em}</div><div class="res-title">${ti}</div><div class="res-sub">${msg}</div><div class="res-score">${qScore}</div><div class="res-detail">poin kuis ini · ${pct}% benar</div><div class="res-grid"><div class="stat"><div class="stat-lbl">Benar</div><div class="stat-val g">${qCorrect}</div></div><div class="stat"><div class="stat-lbl">Salah</div><div class="stat-val r">${qWrong}</div></div></div><button class="res-restart" onclick="startQuiz()">Coba lagi</button></div>`;
+}
+
+renderCats();
+startFlashcard();
+</script>
+</body>
+</html>
