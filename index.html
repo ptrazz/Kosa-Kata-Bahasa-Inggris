@@ -530,7 +530,7 @@ function fcNext(){if(fcIdx<fcCards.length){fcIdx++;renderFC()}}
 function fcMark(t){if(t==='know')fcKnow++;else fcReview++;fcIdx++;renderFC()}
 
 /* QUIZ */
-const QUIZ_LEN=10;
+const QUIZ_LEN=infinity;
 let qQ=[],qIdx=0,qScore=0,qCorrect=0,qWrong=0,qAnswered=false,qMode='EN';
 function startQuiz(){qIdx=0;qScore=0;qCorrect=0;qWrong=0;qAnswered=false;buildQQ();renderQBody()}
 function buildQQ(){
